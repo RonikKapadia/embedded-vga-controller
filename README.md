@@ -57,7 +57,8 @@ embedded-vga-controller/
 │   ├── image_top_tb.vhd       # Top-level integration testbench
 │   ├── make.bat               # GHDL compilation script
 │   ├── check.bat              # VHDL syntax check script
-│   └── view.bat               # GTKWave launcher
+│   ├── view.bat               # GTKWave launcher
+│   └── constraints.xdc        # Zybo Z7 pin constraints
 └── assets/
     ├── block_diagram_drawing.png   # Hand-drawn system block diagram
     ├── top_block_diagram.png       # RTL block diagram
@@ -118,25 +119,42 @@ The `make.bat` script performs three steps:
 
 To synthesize for a Xilinx FPGA:
 
-1. Create a new Vivado project targeting your FPGA part
+1. Create a new Vivado project targeting the Zybo Z7 (Zynq-7000)
 2. Add all VHDL files from `src/` (excluding testbenches and `.bat` files)
 3. Add the `picture.coe` file as a memory initialization source
 4. Set `image_top` as the top module
-5. Add XDC constraints for your board's VGA connector pins
+5. Add the provided `constraints.xdc` to constrain the Zybo Z7 VGA connector pins
 6. Run synthesis and implementation
+
+> **Note**: The included `constraints.xdc` is already configured for the Zybo Z7 board. If using a different board, update the pin assignments accordingly.
+
+> **Note**: The included `constraints.xdc` is already configured for the Zybo Z7 board. If using a different board, update the pin assignments accordingly.
 
 ### Pin Mapping (Zybo Z7 Example)
 
 | Signal | FPGA Pin | Description |
 |--------|----------|-------------|
-| `clk` | K17 | 125 MHz system clock |
-| `vga_hs` | V15 | VGA horizontal sync |
-| `vga_vs` | W15 | VGA vertical sync |
-| `vga_r[4:0]` | V16, W16, T17, T15, V13 | Red channel |
-| `vga_g[5:0]` | W13, V12, U12, T12, T10, T11 | Green channel |
-| `vga_b[4:0]` | W14, Y14, T14, T15, V13 | Blue channel |
+| `clk` | L16 | 125 MHz system clock |
+| `vga_hs` | P19 | VGA horizontal sync |
+| `vga_vs` | R19 | VGA vertical sync |
+| `vga_r[0]` | M19 | Red bit 0 (LSB) |
+| `vga_r[1]` | L20 | Red bit 1 |
+| `vga_r[2]` | J20 | Red bit 2 |
+| `vga_r[3]` | G20 | Red bit 3 |
+| `vga_r[4]` | F19 | Red bit 4 (MSB) |
+| `vga_g[0]` | H18 | Green bit 0 (LSB) |
+| `vga_g[1]` | N20 | Green bit 1 |
+| `vga_g[2]` | L19 | Green bit 2 |
+| `vga_g[3]` | J19 | Green bit 3 |
+| `vga_g[4]` | H20 | Green bit 4 |
+| `vga_g[5]` | F20 | Green bit 5 (MSB) |
+| `vga_b[0]` | P20 | Blue bit 0 (LSB) |
+| `vga_b[1]` | M20 | Blue bit 1 |
+| `vga_b[2]` | K19 | Blue bit 2 |
+| `vga_b[3]` | J18 | Blue bit 3 |
+| `vga_b[4]` | G19 | Blue bit 4 (MSB) |
 
-*Note: Update pin assignments based on your specific FPGA board.*
+*All pins use LVCMOS33 I/O standard. Update pin assignments if using a different board.*
 
 ## Simulation Results
 
@@ -155,7 +173,7 @@ Key signals to observe:
 
 ### Resource Utilization
 
-Post-synthesis resource utilization on a Xilinx Artix-7 FPGA:
+Post-synthesis resource utilization on a Xilinx Zynq-7000 FPGA:
 
 ![Utilization Table](assets/post_synthesis_utilization_table.png)
 
